@@ -35,7 +35,7 @@ export default function Index() {
             dataIndex: "",
             render: (endpoint: Endpoint) => (
                 <>
-                    <Button onClick={() => onViewResponseClick(endpoint)}>View response</Button>
+                    <Button onClick={() => onViewResponseClick(endpoint)}>Hit Endpoint</Button>
                     <Button onClick={async () => {
                         await fetch(`/remove-api?endpoint=${endpoint.requestUrl}`, { method: "DELETE" })
                         location.reload()
@@ -47,7 +47,7 @@ export default function Index() {
 
     return (
         <div className="container">
-            <div className="main__title">Mocked APIs Lisst</div>
+            <div className="main__title">Mocked APIs List</div>
             <Table dataSource={data} columns={columns} pagination={false}/>
             <Button type="primary" onClick={() => setIsAddMockAPIVisible(true)} className="main__add-btn">Add
                 Endpoint</Button>
