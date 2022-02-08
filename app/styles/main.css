@@ -1,0 +1,14 @@
+.container {
+    max-width: 800px;
+    margin: auto;
+}
+
+.main__title {
+    font-size: 24px;
+    margin-bottom: 12px;
+    margin-top: 48px;
+}
+
+.main__add-btn {
+    margin-top: 24px;
+}

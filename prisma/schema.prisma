@@ -1,0 +1,17 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["mongoDb"]
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model endpoints {
+  id           String @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  method       String
+  requestUrl   String @unique
+  responseBody Json
+  responseCode Int
+}
