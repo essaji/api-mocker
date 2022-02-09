@@ -10,7 +10,6 @@ Depending upon which datasource you're using (in our case mongodb)
 From your terminal:
 
 ```shell
-export DATABASE_PROVIDER="mongodb"
 export DATABASE_URL="mongodb+srv://<USER>:<PASS>@cluster0.mxx5x.mongodb.net/<DATABASE_NAME>?retryWrites=true&w=majority"
 ```
 
