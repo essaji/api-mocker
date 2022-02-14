@@ -1,4 +1,4 @@
-import {ActionFunction} from "remix";
+import {ActionFunction, json} from "remix";
 import {saveEndpoint} from "~/repository/repository.server";
 import Endpoint from "~/models/endpoint";
 
@@ -11,7 +11,12 @@ export const action: ActionFunction = async ({ request }) => {
         JSON.stringify(JSON.parse(apiResource.responseBody))
     )
 
-    await saveEndpoint(endpoint)
+    try {
+        await saveEndpoint(endpoint)
+    }
+    catch(e) {
+        return json({ message: e.message }, { status: 400, statusText: e.messgae })
+    }
     return new Response("Saved", { status: 200 })
 }
 

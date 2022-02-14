@@ -1,5 +1,7 @@
+import axios from "axios";
+
 const Editor = React.lazy(() => import("../components/Editor/Editor"));
-import {useLoaderData} from "@remix-run/react";
+import {useLoaderData, useSubmit} from "@remix-run/react";
 import {getEndpoints} from "~/repository/repository.server";
 import Endpoint from "~/models/endpoint";
 import {Button, Table, Modal} from "antd";
@@ -7,6 +9,7 @@ import {ColumnsType} from "antd/es/table";
 import React, {useState, Suspense} from "react";
 import AddAPIModal from "~/components/AddAPIModal/AddAPIModal";
 import beautify from "json-beautify"
+import {toast, Toaster} from 'react-hot-toast';
 
 export function loader() {
     return getEndpoints()
@@ -14,6 +17,7 @@ export function loader() {
 
 export default function Index() {
     const data = useLoaderData<Endpoint[]>()
+    const submitter = useSubmit()
     const [isAddMockAPIVisible, setIsAddMockAPIVisible] = useState(false)
     const [isViewResponseVisible, setIsViewResponseVisible] = useState(false)
     const [currentResponseBody, setCurrentResponseBody] = useState<string>('[]')
@@ -24,6 +28,10 @@ export default function Index() {
         })).json()
         setCurrentResponseBody(data)
         setIsViewResponseVisible(true)
+    }
+
+    const refetchData = () => {
+        submitter({ method: "get" })
     }
     const columns: ColumnsType<Endpoint> = [
         {title: "Request Method", key: "method", dataIndex: "method"},
@@ -37,8 +45,17 @@ export default function Index() {
                 <>
                     <Button onClick={() => onViewResponseClick(endpoint)}>Hit Endpoint</Button>
                     <Button onClick={async () => {
-                        await fetch(`/remove-api?endpoint=${endpoint.requestUrl}`, { method: "DELETE" })
-                        location.reload()
+                        toast.promise(
+                            axios.delete("/remove-api", { params: { endpoint: endpoint.requestUrl }}),
+                            {
+                                loading: "Loading...",
+                                success: () => {
+                                    refetchData()
+                                    return "Endpoint deleted successfully!"
+                                },
+                                error: "Something went wrong..."
+                            }
+                        )
                     }} style={{ color: 'red', marginLeft: 12 }}>Delete</Button>
                 </>
             )
@@ -52,7 +69,10 @@ export default function Index() {
             <Button type="primary" onClick={() => setIsAddMockAPIVisible(true)} className="main__add-btn">Add
                 Endpoint</Button>
 
-            <AddAPIModal visible={isAddMockAPIVisible} closeModal={() => setIsAddMockAPIVisible(false)}
+            <AddAPIModal visible={isAddMockAPIVisible} closeModal={shouldRefetchData => {
+                setIsAddMockAPIVisible(false)
+                if (shouldRefetchData) refetchData()
+            }}
             />
             <Modal title="Mocked API Response" visible={isViewResponseVisible}
                    cancelButtonProps={{style: {display: 'none'}}} okButtonProps={{style: {display: 'none'}}}
@@ -61,6 +81,7 @@ export default function Index() {
                     <Editor content={beautify(JSON.parse(currentResponseBody), null!!, 2, 60)}/>
                 </Suspense>
             </Modal>
+            <Toaster />
         </div>
     )
         ;

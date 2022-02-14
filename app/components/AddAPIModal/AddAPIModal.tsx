@@ -1,7 +1,10 @@
+import axios from "axios";
+
 const Editor = React.lazy(() => import("../Editor/Editor"));
 import {Button, Form, Input, Modal, Select} from "antd";
 import React, {useState, Suspense} from "react";
 import beautify from "json-beautify"
+import toast from 'react-hot-toast';
 
 const isJsonString = (str: string) => {
     try {
@@ -28,7 +31,7 @@ export default function AddAPIModal(props: AddEndpointModalProps) {
     const isSaveBtnDisabled = !(formFields.method && formFields.requestUrl && formFields.responseCode && isJsonString(formFields.responseBody))
     return (
         <Modal title="Add Mock API" visible={visible} okButtonProps={{style: {display: 'none'}}}
-               cancelButtonProps={{style: {display: 'none'}}} onCancel={closeModal}>
+               cancelButtonProps={{style: {display: 'none'}}} onCancel={() => closeModal()}>
             <Form>
                 <Form.Item label="Request Method" name="method" initialValue={formFields.method}>
                     <Select
@@ -55,13 +58,19 @@ export default function AddAPIModal(props: AddEndpointModalProps) {
                 </Form.Item>
                 <Form.Item>
                     <Button type="primary" disabled={isSaveBtnDisabled} onClick={async () => {
-                        await fetch("/add-api", {
-                            method: "post",
-                            body: JSON.stringify(formFields),
-                            headers: {'Content-Type': 'application/json'}
-                        })
-                        closeModal()
-                        location.reload()
+                        toast.promise(
+                            axios.post("/add-api", JSON.stringify(formFields), { headers: { 'Content-Type': 'application/json' } }),
+                            {
+                                loading: "Adding API...",
+                                error: e => {
+                                    return `Error: ${e.response.data.message}`
+                                },
+                                success: () => {
+                                    closeModal(true)
+                                    return "API Added Successfully!"
+                                }
+                            }
+                        )
                     }}>Save</Button>
                 </Form.Item>
             </Form>
@@ -71,5 +80,5 @@ export default function AddAPIModal(props: AddEndpointModalProps) {
 
 interface AddEndpointModalProps {
     visible: boolean
-    closeModal: () => void
+    closeModal: (args?: boolean) => void
 }
