@@ -7,7 +7,7 @@ import Endpoint from "~/models/endpoint";
 import {Button, Table, Modal, Popconfirm} from "antd";
 import {ColumnsType} from "antd/es/table";
 import React, {useState, Suspense} from "react";
-import AddApiModal from "~/components/AddAPIModal/AddAPIModal";
+import AddApiModal from "~/components/AddApiModal/AddApiModal";
 import beautify from "json-beautify"
 import {toast, Toaster} from 'react-hot-toast';
 import ModifyApiModal from "~/components/ModifyApiModal/ModifyApiModal";
