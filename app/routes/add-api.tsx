@@ -1,22 +1,38 @@
 import {ActionFunction, json} from "remix";
-import {saveEndpoint} from "~/repository/repository.server";
+import {modifyApiByUrl, saveEndpoint} from "~/repository/repository.server";
 import Endpoint from "~/models/endpoint";
 
-export const action: ActionFunction = async ({ request }) => {
+
+const getEndpointResource = async (request: Request): Promise<Endpoint> => {
     const apiResource = await request.json() as Endpoint
-    const endpoint = new Endpoint(
+    return new Endpoint(
         apiResource.method,
         apiResource.requestUrl,
         apiResource.responseCode,
         JSON.stringify(JSON.parse(apiResource.responseBody))
     )
+}
 
-    try {
-        await saveEndpoint(endpoint)
+export const action: ActionFunction = async ({ request }) => {
+    switch (request.method) {
+        case "POST":
+            try {
+                await saveEndpoint(await getEndpointResource(request))
+            }
+            catch(e) {
+                return json({ message: e.message }, { status: 400, statusText: e.messgae })
+            }
+            break;
+        case "PUT":
+            const endpoint = await getEndpointResource(request)
+            try {
+                await modifyApiByUrl(endpoint.requestUrl, endpoint)
+            }
+            catch(e) {
+                return json({ message: e.message }, { status: 400, statusText: e.messgae })
+            }
     }
-    catch(e) {
-        return json({ message: e.message }, { status: 400, statusText: e.messgae })
-    }
+
     return new Response("Saved", { status: 200 })
 }
 

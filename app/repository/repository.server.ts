@@ -30,3 +30,11 @@ export async function getEndpointByUrl(requestUrl: string): Promise<Endpoint> {
 export async function removeApiByUrl(requestUrl: string) {
     await db.endpoints.delete({ where: { requestUrl } })
 }
+
+export async function modifyApiByUrl(requestUrl: string, data: Endpoint) {
+    await db.endpoints.update({ where: { requestUrl }, data })
+}
+
+export async function getApiMockByUrl(requestUrl: string): Promise<Endpoint> {
+    return await db.endpoints.findFirst({ where: { requestUrl } }) as unknown as Endpoint
+}

@@ -5,6 +5,7 @@ import {Button, Form, Input, Modal, Select} from "antd";
 import React, {useState, Suspense} from "react";
 import beautify from "json-beautify"
 import toast from 'react-hot-toast';
+import Endpoint from "~/models/endpoint";
 
 const isJsonString = (str: string) => {
     try {
@@ -16,19 +17,18 @@ const isJsonString = (str: string) => {
 }
 
 
-export default function AddAPIModal(props: AddEndpointModalProps) {
-    const {visible, closeModal} = props
+export default function ModifyApiModal(props: ModifyApiModalProps) {
+    const {visible, closeModal, endpoint} = props
     const listOfMethods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-    const sampleObject = [{id: "123", name: "EESA", DOB: new Date()}]
 
-    const [formFields, setFormFields] = useState({
-        method: listOfMethods[0],
-        requestUrl: "mocked/api/url/here",
-        responseCode: 200,
-        responseBody: beautify(sampleObject, null!!, 2, 60)
+    const [formFields, setFormFields] = useState<Endpoint>({
+        method: endpoint.method,
+        requestUrl: endpoint.requestUrl,
+        responseCode: endpoint.responseCode,
+        responseBody: beautify(JSON.parse(endpoint.responseBody), null!!, 2, 60)
     })
 
-    const isSaveBtnDisabled = !(formFields.method && formFields.requestUrl && formFields.responseCode && isJsonString(formFields.responseBody))
+    const isSaveBtnDisabled = !(formFields?.method && formFields.requestUrl && formFields.responseCode && isJsonString(formFields.responseBody))
     return (
         <Modal title="Add Mock API" visible={visible} okButtonProps={{style: {display: 'none'}}}
                cancelButtonProps={{style: {display: 'none'}}} onCancel={() => closeModal()}>
@@ -59,7 +59,7 @@ export default function AddAPIModal(props: AddEndpointModalProps) {
                 <Form.Item>
                     <Button type="primary" disabled={isSaveBtnDisabled} onClick={async () => {
                         toast.promise(
-                            axios.post("/add-api", JSON.stringify(formFields), { headers: { 'Content-Type': 'application/json' } }),
+                            axios.put("/add-api", JSON.stringify(formFields), { headers: { 'Content-Type': 'application/json' } }),
                             {
                                 loading: "Adding API...",
                                 error: e => {
@@ -67,18 +67,19 @@ export default function AddAPIModal(props: AddEndpointModalProps) {
                                 },
                                 success: () => {
                                     closeModal(true)
-                                    return "API Added Successfully!"
+                                    return "API Updated Successfully!"
                                 }
                             }
                         )
-                    }}>Save</Button>
+                    }}>Update</Button>
                 </Form.Item>
             </Form>
         </Modal>
     )
 }
 
-interface AddEndpointModalProps {
+interface ModifyApiModalProps {
     visible: boolean
+    endpoint: Endpoint
     closeModal: (args?: boolean) => void
 }
