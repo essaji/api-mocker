@@ -6,6 +6,7 @@ import React, {useState, Suspense} from "react";
 import beautify from "json-beautify"
 import toast from 'react-hot-toast';
 import Endpoint from "~/models/endpoint";
+import {useSubmit} from "@remix-run/react";
 
 const isJsonString = (str: string) => {
     try {
@@ -20,6 +21,7 @@ const isJsonString = (str: string) => {
 export default function ModifyApiModal(props: ModifyApiModalProps) {
     const {visible, closeModal, endpoint} = props
     const listOfMethods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    const submitter = useSubmit()
 
     const [formFields, setFormFields] = useState<Endpoint>({
         method: endpoint.method,
@@ -59,13 +61,14 @@ export default function ModifyApiModal(props: ModifyApiModalProps) {
                 <Form.Item>
                     <Button type="primary" disabled={isSaveBtnDisabled} onClick={async () => {
                         toast.promise(
-                            axios.put("/add-api", JSON.stringify(formFields), { headers: { 'Content-Type': 'application/json' } }),
+                            axios.put(`/add-api?endpoint=${endpoint.requestUrl}`, JSON.stringify(formFields), { headers: { 'Content-Type': 'application/json' } }),
                             {
                                 loading: "Adding API...",
                                 error: e => {
                                     return `Error: ${e.response.data.message}`
                                 },
                                 success: () => {
+                                    submitter({ method: 'get' })
                                     closeModal(true)
                                     return "API Updated Successfully!"
                                 }

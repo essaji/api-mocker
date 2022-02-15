@@ -26,7 +26,9 @@ export const action: ActionFunction = async ({ request }) => {
         case "PUT":
             const endpoint = await getEndpointResource(request)
             try {
-                await modifyApiByUrl(endpoint.requestUrl, endpoint)
+                const url = new URL(request.url)
+                const requestUrl = url.searchParams.get('endpoint') || ""
+                await modifyApiByUrl(requestUrl, endpoint)
             }
             catch(e) {
                 return json({ message: e.message }, { status: 400, statusText: e.messgae })
