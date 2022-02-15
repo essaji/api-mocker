@@ -22,7 +22,6 @@ export default function ModifyApiModal(props: ModifyApiModalProps) {
     const listOfMethods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 
     const [formFields, setFormFields] = useState<Endpoint>({
-        id: endpoint.id,
         method: endpoint.method,
         requestUrl: endpoint.requestUrl,
         responseCode: endpoint.responseCode,
