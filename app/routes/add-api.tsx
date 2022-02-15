@@ -9,8 +9,7 @@ const getEndpointResource = async (request: Request): Promise<Endpoint> => {
         apiResource.method,
         apiResource.requestUrl,
         apiResource.responseCode,
-        JSON.stringify(JSON.parse(apiResource.responseBody)),
-        apiResource.id
+        JSON.stringify(JSON.parse(apiResource.responseBody))
     )
 }
 
