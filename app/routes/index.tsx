@@ -28,7 +28,7 @@ export default function Index() {
     const [endpointToModify, setEndpointToModify] = useState<Endpoint>()
 
     const onViewResponseClick = async (endpoint: Endpoint) => {
-        const data = await (await fetch(`/api-mocker?endpoint=${endpoint.requestUrl}`, {
+        const data = await (await fetch(`/api-mocker/${endpoint.requestUrl}`, {
             method: endpoint.method
         })).json()
         setCurrentResponseBody(data)
