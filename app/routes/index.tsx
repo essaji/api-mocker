@@ -31,7 +31,7 @@ export default function Index() {
         const data = await (await fetch(`/api-mocker/${endpoint.requestUrl}`, {
             method: endpoint.method
         })).json()
-        setCurrentResponseBody(data)
+        setCurrentResponseBody(JSON.stringify(data))
         setIsViewResponseVisible(true)
     }
 

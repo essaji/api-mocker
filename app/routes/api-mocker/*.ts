@@ -7,5 +7,8 @@ export const loader: LoaderFunction = async ({request}) => {
 
     const requestUrl = url.pathname.slice(ROUTE_URI.length, url.pathname.length)
     const endpoint = await getEndpointByUrl(requestUrl)
-    return json(endpoint.responseBody, { status: endpoint.responseCode })
+    return new Response(endpoint.responseBody, {
+        status: endpoint.responseCode,
+        headers: {"Content-Type": "application/json; charset=utf-8"}
+    })
 }
