@@ -42,6 +42,7 @@ export default function Index() {
     }
 
     const onDeleteConfirm = (endpoint: Endpoint) => {
+        setCurrentUrlToDelete("")
         toast.promise(
             axios.delete("/remove-api", {params: {endpoint: endpoint.requestUrl}}),
             {
