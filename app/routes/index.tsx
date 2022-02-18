@@ -57,7 +57,7 @@ export default function Index() {
     }
 
     const refetchData = () => {
-        submitter({method: "get"})
+        submitter({})
     }
     const columns: ColumnsType<Endpoint> = [
         {title: "Request Method", key: "method", dataIndex: "method"},
