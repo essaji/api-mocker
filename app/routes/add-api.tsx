@@ -1,15 +1,16 @@
 import {ActionFunction, json} from "remix";
 import {modifyApiByUrl, saveEndpoint} from "~/repository/repository.server";
-import Endpoint from "~/models/endpoint";
+import { Endpoint } from '~/models/Endpoint';
 
 
 const getEndpointResource = async (request: Request): Promise<Endpoint> => {
-    const apiResource = await request.json() as Endpoint
+    const response: Endpoint = await request.json()
     return new Endpoint(
-        apiResource.method,
-        apiResource.requestUrl,
-        apiResource.responseCode,
-        JSON.stringify(JSON.parse(apiResource.responseBody))
+      response.method,
+      response.requestUrl,
+      response.responseCode,
+      JSON.stringify(JSON.parse(response.responseBody)),
+      response.throwError
     )
 }
 
