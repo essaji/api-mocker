@@ -24,18 +24,17 @@ export async function saveEndpoint(document: Endpoint) {
 export async function getEndpointByUrl(requestUrl: string): Promise<Endpoint> {
     const endpoint = await db.endpoint.findFirst({ where: { requestUrl } })
     if (!endpoint) throw Error("request url not found")
-    return endpoint
+    return endpoint as Endpoint
 }
 
 export async function removeApiByUrl(requestUrl: string) {
     await db.endpoint.delete({ where: { requestUrl } })
 }
 
-export async function modifyApiByUrl(requestUrl: string, { id, ...data }: Endpoint) {
-
+export async function modifyApiByUrl(requestUrl: string, data: Endpoint) {
     await db.endpoint.update({ where: { requestUrl }, data })
 }
 
 export async function getApiMockByUrl(requestUrl: string): Promise<Endpoint> {
-    return await db.endpoint.findFirst({ where: { requestUrl } }) as unknown as Endpoint
+    return await db.endpoint.findFirst({ where: { requestUrl } }) as Endpoint
 }

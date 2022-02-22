@@ -20,7 +20,7 @@ export const action: ActionFunction = async ({ request }) => {
             try {
                 await saveEndpoint(await getEndpointResource(request))
             }
-            catch(e) {
+            catch(e: any) {
                 return json({ message: e.message }, { status: 400, statusText: e.messgae })
             }
             break;
@@ -31,7 +31,7 @@ export const action: ActionFunction = async ({ request }) => {
                 const requestUrl = url.searchParams.get('endpoint') || ""
                 await modifyApiByUrl(requestUrl, endpoint)
             }
-            catch(e) {
+            catch(e: any) {
                 return json({ message: e.message }, { status: 400, statusText: e.messgae })
             }
     }

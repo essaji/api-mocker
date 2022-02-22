@@ -38,4 +38,4 @@ export default function App() {
   );
 }
 
-export const ErrorBoundary = ({ error }) => <div>{error.message}</div>
+export const ErrorBoundary = ({ error }: any) => <div>{error.message}</div>
