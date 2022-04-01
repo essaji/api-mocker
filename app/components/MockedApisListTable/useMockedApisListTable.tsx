@@ -1,13 +1,14 @@
 import {useLoaderData, useSubmit} from "@remix-run/react";
-import { Endpoint } from '~/models/Endpoint';
+import {Endpoint} from '~/models/Endpoint';
 import React, {useState} from "react";
 import {toast} from "react-hot-toast";
 import {ColumnsType} from "antd/es/table";
+import {Typography} from "antd";
 import {Button, Popconfirm} from "antd";
 import beautify from "json-beautify";
 import {deleteApi, fetchApiDetail, fetchApiResponse} from "~/client";
 
-export default function useMockedApisListTable () {
+export default function useMockedApisListTable() {
   const data = useLoaderData<Endpoint[]>()
   const submitter = useSubmit()
   const [isAddMockAPIVisible, setIsAddMockAPIVisible] = useState(false)
@@ -20,16 +21,16 @@ export default function useMockedApisListTable () {
 
   const onViewResponseClick = async (endpoint: Endpoint) => {
     try {
-      const { data } = await fetchApiResponse(endpoint)
+      const {data} = await fetchApiResponse(endpoint)
       setCurrentResponseBody(JSON.stringify(data))
       setIsViewResponseVisible(true)
-    } catch(e: any) {
+    } catch (e: any) {
       toast.error(e.response.data)
     }
   }
 
   const onClickModify = async (endpoint: Endpoint) => {
-    const { data } = await fetchApiDetail(endpoint.requestUrl)
+    const {data} = await fetchApiDetail(endpoint.requestUrl)
     await setEndpointToModify(data)
     setIsModifyApiModalVisible(true)
   }
@@ -50,7 +51,13 @@ export default function useMockedApisListTable () {
   }
   const columns: ColumnsType<Endpoint> = [
     {title: "Request Method", key: "method", dataIndex: "method"},
-    {title: "Request Url", key: "requestUrl", dataIndex: "requestUrl"},
+    {
+      title: "Request Url",
+      key: "requestUrl",
+      dataIndex: "requestUrl",
+      render: (requestUrl: string) => <Typography.Text ellipsis={true}
+                                                       style={{width: 200}}>{requestUrl}</Typography.Text>
+    },
     {title: "ResponseCode", key: "responseCode", dataIndex: "responseCode"},
     {
       title: "Actions",
@@ -60,7 +67,8 @@ export default function useMockedApisListTable () {
         <>
           <Button onClick={() => onViewResponseClick(endpoint)}>Hit Endpoint</Button>
           <Button onClick={() => onClickModify(endpoint)} style={{marginLeft: 12}}>Modify</Button>
-          <Popconfirm title="Are you sure?" visible={currentUrlToDelete === endpoint.requestUrl} okText="Yes" cancelText="No"
+          <Popconfirm title="Are you sure?" visible={currentUrlToDelete === endpoint.requestUrl} okText="Yes"
+                      cancelText="No"
                       onConfirm={() => onDeleteConfirm(endpoint)} onCancel={() => setCurrentUrlToDelete("")}>
             <Button onClick={() => setCurrentUrlToDelete(endpoint.requestUrl)}
                     style={{color: 'red', marginLeft: 12}}>Delete</Button>
